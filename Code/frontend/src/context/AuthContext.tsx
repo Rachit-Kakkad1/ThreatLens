@@ -18,7 +18,13 @@ interface AuthContextType {
   login: (googleIdToken: string) => Promise<void>;
   devLogin: () => Promise<void>;
   logout: () => Promise<void>;
-}
+  // Team / UI state
+  team: 'red' | 'blue';
+  setTeam: (team: 'red' | 'blue') => void;
+  toggleTeam: () => void;
+  sidebarCollapsed: boolean;
+  setSidebarCollapsed: (val: boolean) => void;
+} 
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -27,6 +33,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 ========================================================= */
 
 const getToken = () => localStorage.getItem("sentinai_token");
+const getTeam = () => (localStorage.getItem("sentinai_team") as 'red' | 'blue') || 'red';
 
 /* =========================================================
    Provider
@@ -38,6 +45,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     Boolean(getToken())
   );
   const [loading, setLoading] = useState<boolean>(true);
+
+  // Team and UI state
+  const [team, setTeam] = useState<'red' | 'blue'>(getTeam());
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+
+  // Persist team selection
+  useEffect(() => {
+    localStorage.setItem('sentinai_team', team);
+  }, [team]);
+
+  const toggleTeam = () => setTeam((t) => (t === 'red' ? 'blue' : 'red'));
 
   /* =========================================================
      Hydration: Token → User
@@ -192,6 +210,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         devLogin,
         logout,
+        team,
+        setTeam,
+        toggleTeam,
+        sidebarCollapsed,
+        setSidebarCollapsed,
       }}
     >
       {children}

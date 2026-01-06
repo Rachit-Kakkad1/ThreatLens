@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Target } from 'lucide-react';
 import { CodeAnalysisGraph } from '../components/CodeAnalysisGraph';
+import { FutureScopeSection } from '../components/FutureScopeSection';
 import './LandingPage.css';
 
 const LandingPage: React.FC = () => {
@@ -217,14 +218,20 @@ const LandingPage: React.FC = () => {
                         <span className="text-xl font-bold tracking-widest font-mono text-white group-hover:text-blue-400 transition-colors">ThreatLens</span>
                     </div>
                     <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400">
-                        {['Methodology', 'Features', 'Architecture', 'FAQ'].map((item) => (
+                        {[
+                            { name: 'Methodology', id: 'methodology' },
+                            { name: 'Features', id: 'features' },
+                            { name: 'Architecture', id: 'architecture' },
+                            { name: 'Future Scopes', id: 'roadmap' },
+                            { name: 'FAQ', id: 'faq' }
+                        ].map((item) => (
                             <a
-                                key={item}
-                                href={`#${item.toLowerCase()}`}
-                                onClick={(e) => scrollToSection(e, `#${item.toLowerCase()}`)}
+                                key={item.name}
+                                href={`#${item.id}`}
+                                onClick={(e) => scrollToSection(e, `#${item.id}`)}
                                 className="hover:text-white transition-colors cursor-pointer"
                             >
-                                {item}
+                                {item.name}
                             </a>
                         ))}
                     </div>
@@ -458,6 +465,9 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
+            {/* --- FUTURE SCOPE SECTION --- */}
+            <FutureScopeSection />
+
             {/* --- FAQ SECTION --- */}
             <section id="faq" className="py-32 px-6 border-t border-white/5">
                 <div className="max-w-3xl mx-auto">
@@ -500,6 +510,16 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
+            {/* --- FINAL THOUGHT --- */}
+            <div className="py-24 text-center border-t border-white/5 bg-[#0B0F19]">
+                <div className="max-w-4xl mx-auto px-6">
+                    <p className="font-mono text-sm md:text-base text-transparent bg-clip-text bg-gradient-to-r from-gray-500 via-gray-300 to-gray-500 tracking-[0.2em] uppercase opacity-80 hover:opacity-100 transition-opacity duration-700 cursor-default select-none">
+                        "The only truly secure system is one that is powered off, cast in a block of concrete and sealed in a lead-lined room with armed guards - and even then I have my doubts."
+                    </p>
+                    <p className="mt-4 text-xs font-mono text-blue-500/60 tracking-widest">— GENE SPAFFORD</p>
+                </div>
+            </div>
+
             <footer className="py-12 border-t border-white/5 text-center text-gray-600 font-mono text-xs">
                 <div className="mb-4 flex justify-center gap-6">
                     <a href="#" className="hover:text-blue-400 transition-colors cursor-pointer">TWITTER</a>
@@ -509,6 +529,7 @@ const LandingPage: React.FC = () => {
                 <p>ThreatLens // SECURITY_INTELLIGENCE_PLATFORM</p>
                 <p className="mt-2">© 2026 ALL RIGHTS RESERVED</p>
             </footer>
+
         </div>
     );
 };
