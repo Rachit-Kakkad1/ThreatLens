@@ -11,7 +11,12 @@ const { Parser } = SQLParser;
  * - Language-aware (JS, SQL, JSON)
  */
 
-const sqlParser = new Parser();
+let sqlParser = null;
+try {
+  sqlParser = new Parser();
+} catch (e) {
+  sqlParser = null;
+}
 
 /**
  * Validate syntax for a given content and language.
@@ -75,8 +80,20 @@ function validateJavaScript(content) {
 }
 
 function validateSQL(content) {
+  if (!sqlParser) {
+    return {
+      valid: false,
+      language: "sql",
+      errors: [
+        {
+          message: "SQL parser not initialized",
+          line: 0,
+          column: 0,
+        },
+      ],
+    };
+  }
   try {
-    // node-sql-parser astify throws error on invalid SQL
     sqlParser.astify(content);
     return {
       valid: true,
@@ -84,11 +101,8 @@ function validateSQL(content) {
       errors: [],
     };
   } catch (err) {
-    // node-sql-parser error format might vary
-    // It usually has 'location' or 'message'
     const line = err.location?.start?.line || 0;
     const column = err.location?.start?.column || 0;
-    
     return {
       valid: false,
       language: "sql",
