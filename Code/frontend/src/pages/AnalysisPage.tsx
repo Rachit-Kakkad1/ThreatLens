@@ -302,7 +302,7 @@ export const AnalysisPage = () => {
             transition={status === "SCANNING" ? { repeat: Infinity, duration: 0.2 } : undefined}
             className="text-3xl font-black tracking-tighter italic select-none text-white"
           >
-            VULN-LAB <span className="text-cyber-blue">X-01</span>
+            THREAT-LAB <span className="text-cyber-blue">X-01</span>
           </motion.h1>
           <div className="flex items-center space-x-4 text-[10px] font-bold tracking-[0.2em] text-gray-500 uppercase mt-1">
             <span className="flex items-center text-cyber-green/70">
