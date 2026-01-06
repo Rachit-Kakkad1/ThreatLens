@@ -46,6 +46,20 @@ export async function runCombinedAnalysis({
     };
   }
 
+  // 🛑 HALT ON SYNTAX ERROR
+  if (engineResult.engineDecision === "HALTED_AT_SYNTAX_STAGE") {
+    return {
+      success: true,
+      analysisType: "MANUAL",
+      syntax: engineResult.syntax,
+      analysis: {
+        vulnerabilities: [],
+        overallRiskScore: 0,
+      },
+      engineDecision: "HALTED_AT_SYNTAX_STAGE",
+    };
+  }
+
   const {
     vulnerabilities = [],
     attackerView = [],
@@ -110,6 +124,7 @@ export async function runCombinedAnalysis({
   return {
     success: true,
     mode,
+    syntax: engineResult.syntax, // ✅ Syntax status
 
     analysis: {
       overallRiskScore,

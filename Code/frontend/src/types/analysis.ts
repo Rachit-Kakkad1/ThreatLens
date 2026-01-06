@@ -55,6 +55,7 @@ export interface AnalysisRequest {
 
 export interface AttackerView {
   abuseLogic: string;
+  defenderLogic?: string; // Sometimes confused in old engine
 }
 
 export interface DefenderFix {
@@ -73,6 +74,21 @@ export interface ImpactAnalysis {
 }
 
 // ==================================================
+// Syntax Validation (NEW)
+// ==================================================
+export interface SyntaxError {
+  message: string;
+  line: number;
+  column: number;
+}
+
+export interface SyntaxResult {
+  valid: boolean;
+  language: string;
+  errors: SyntaxError[];
+}
+
+// ==================================================
 // Analyze response (MERGED SHAPE)
 // ==================================================
 
@@ -84,6 +100,10 @@ export interface AnalysisResult {
   // Core (shared)
   riskScore: number;
   vulnerabilities: Vulnerability[];
+
+  // Syntax Validation
+  syntax?: SyntaxResult;
+  engineDecision?: string;
 
   // Old engine outputs (optional, FIXES YOUR 8 ERRORS)
   attackerView?: AttackerView[];
@@ -107,52 +127,4 @@ export interface AnalysisResult {
   content?: string;
   createdAt?: string;
   updatedAt?: string;
-}
-
-// ==================================================
-// History
-// ==================================================
-
-export interface AnalysisHistoryItem {
-  id: string;
-  inputType: InputType;
-  overallRiskScore: number;
-  vulnerabilityCount: number;
-  analysisDate: string;
-}
-
-// ==================================================
-// Dashboard
-// ==================================================
-
-export interface DashboardMetrics {
-  totalScans: number;
-  totalVulnerabilities: number;
-
-  // Canonical backend casing
-  severityDistribution: {
-    Low: number;
-    Medium: number;
-    High: number;
-    Critical: number;
-  };
-
-  // Backend contract (plural + riskScore)
-  riskTrends: {
-    date: string;
-    riskScore: number;
-  }[];
-
-  // Optional extended dashboard
-  recentScans?: AnalysisResult[];
-}
-
-// ==================================================
-// Ethics
-// ==================================================
-
-export interface EthicalNotice {
-  title: string;
-  content: string;
-  lastUpdated: string;
 }

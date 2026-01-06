@@ -114,11 +114,6 @@ export async function analyzeCode(req, res) {
       })
     );
 
-    console.log(
-      "[DEBUG] FINAL DB PAYLOAD:",
-      JSON.stringify(normalizedVulnerabilities, null, 2)
-    );
-
     /* ---------- Persist Analysis ---------- */
     const analysis = await Analysis.create({
       userId,
@@ -128,12 +123,17 @@ export async function analyzeCode(req, res) {
       vulnerabilities: normalizedVulnerabilities,
       processingTime: Number(result.analysis.processingTime) || 0,
       analysisDate: new Date(),
+      // 🆕 Persist Engine Decision & Syntax
+      engineDecision: result.engineDecision,
+      syntax: result.syntax,
     });
 
     /* ---------- Response ---------- */
     return res.status(201).json({
       success: true,
       mode: result.mode,
+      engineDecision: result.engineDecision, // ✅ Pass decision to frontend
+      syntax: result.syntax, // ✅ Pass syntax details to frontend
       analysis: {
         id: analysis._id,
         inputType,

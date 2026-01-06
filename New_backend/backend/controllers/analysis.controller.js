@@ -17,7 +17,7 @@ import { runCombinedAnalysis } from "../services/combinedAnalysis.service.js";
 /* ------------------------------------------------------
  * Constants
  * ------------------------------------------------------ */
-const ALLOWED_INPUT_TYPES = new Set(["code", "api", "sql", "config"]);
+const ALLOWED_INPUT_TYPES = new Set(["code", "api", "sql", "config", "json"]); // Added json
 const MAX_CONTENT_LENGTH = 100_000;
 
 /* ------------------------------------------------------
@@ -138,6 +138,7 @@ export async function analyzeCode(req, res) {
         id: analysis._id,
         inputType,
         overallRiskScore: analysis.overallRiskScore,
+        syntax: result.analysis.syntax, // Include syntax results
         vulnerabilities: normalizedVulnerabilities,
         attackerView: result.analysis.attackerView,
         defenderFixes: result.analysis.defenderFixes,
@@ -193,7 +194,7 @@ export async function getAnalysisHistory(req, res) {
         id: a._id,
         inputType: a.inputType,
         overallRiskScore: a.overallRiskScore,
-        vulnerabilityCount: a.vulnerabilities.length,
+        vulnerabilityCount: a.vulnerabilities?.length || 0,
         analysisDate: a.analysisDate,
       })),
       pagination: {
@@ -205,7 +206,6 @@ export async function getAnalysisHistory(req, res) {
     });
   } catch (error) {
     console.error("History fetch error:", error);
-
     return res.status(500).json({
       success: false,
       message: "Failed to fetch analysis history",
@@ -250,7 +250,6 @@ export async function getAnalysisById(req, res) {
     });
   } catch (error) {
     console.error("Fetch analysis error:", error);
-
     return res.status(500).json({
       success: false,
       message: "Failed to fetch analysis",

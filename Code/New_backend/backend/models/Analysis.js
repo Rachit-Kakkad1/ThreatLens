@@ -92,6 +92,24 @@ const analysisSchema = new mongoose.Schema(
       min: 0,
       default: 0,
     },
+
+    /* 🆕 Engine Metadata */
+    engineDecision: {
+      type: String,
+      maxlength: 50,
+      default: "COMPLETED",
+    },
+
+    syntax: {
+      valid: { type: Boolean, default: true },
+      language: String,
+      errors: [{
+        message: String,
+        line: Number,
+        column: Number,
+        _id: false
+      }]
+    },
   },
   {
     timestamps: true,

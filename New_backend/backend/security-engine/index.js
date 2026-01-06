@@ -14,11 +14,12 @@ import { generateSimulatedPayloads } from "./payloads/payloadEngine.js";
 import { calculateImpact } from "./impactEngine.js";
 import { buildSummary } from "./summaryEngine.js";
 import { measureTime } from "./utils/timers.js";
+import { validateSyntax } from "./validators/syntaxValidator.js";
 
 export function analyzeInput({ inputType = "code", content, language }) {
   const stopTimer = measureTime();
 
-  /* 1️⃣ Validate input */
+  /* 1️⃣ Validate input parameters */
   const validation = validateInput({ inputType, content });
   if (!validation.valid) {
     return {
@@ -26,6 +27,12 @@ export function analyzeInput({ inputType = "code", content, language }) {
       error: validation.message,
       processingTime: Number(stopTimer()) || 0,
     };
+  }
+
+  /* 1.5️⃣ Syntax Validation (New) */
+  let syntaxResult = { valid: true, errors: [] };
+  if (inputType === "code" || inputType === "javascript" || language === "javascript") {
+     syntaxResult = validateSyntax(content);
   }
 
   /* 2️⃣ Normalize input */
@@ -63,6 +70,7 @@ export function analyzeInput({ inputType = "code", content, language }) {
   /* 8️⃣ Final response */
   return {
     success: true,
+    syntax: syntaxResult, // New field
     vulnerabilities,
 
     // 🔑 CANONICAL RISK FIELDS

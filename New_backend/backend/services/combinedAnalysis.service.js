@@ -47,6 +47,7 @@ export async function runCombinedAnalysis({
   }
 
   const {
+    syntax = { valid: true, errors: [] }, // Extract syntax
     vulnerabilities = [],
     attackerView = [],
     defenderFixes = [],
@@ -105,36 +106,31 @@ export async function runCombinedAnalysis({
   }
 
   /* ==================================================
-   * STEP 6: Final response (FRONTEND CONTRACT)
+   * STEP 6: Construct Final Result
    * ================================================== */
   return {
     success: true,
     mode,
-
     analysis: {
-      overallRiskScore,
-      processingTime,
+      syntax, // Return syntax
       vulnerabilities: normalizedVulnerabilities,
+      overallRiskScore,
       attackerView: attackerMap,
       defenderFixes: defenderMap,
       impactAnalysis: impactMap,
       abuseScenarios: abuseMap,
+      processingTime,
     },
-
     ai: ai
       ? {
           enabled: true,
           advisoryOnly: true,
-          explanation: ai.explanation,
-          codeSuggestions: ai.codeSuggestions,
-          hypotheses: ai.hypotheses,
+          message: ai,
         }
       : { enabled: false },
-
     ethics: {
       staticAnalysisOnly: true,
       noExecution: true,
-      aiAdvisoryOnly: true,
     },
   };
 }

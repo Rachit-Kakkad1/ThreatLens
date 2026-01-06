@@ -179,6 +179,22 @@ export const AnalysisPage = () => {
       // 3. Handle Success safely
       setResult(data);
 
+      // 🛑 HANDLE SYNTAX ERROR HALT
+      if (data.engineDecision === "HALTED_AT_SYNTAX_STAGE" && data.syntax && !data.syntax.valid) {
+        const errorCount = data.syntax.errors.length;
+        setLogs((prev) => [
+          ...prev,
+          "> ANALYSIS HALTED: SYNTAX ERROR DETECTED",
+          `> ${errorCount} SYNTAX ERRORS FOUND`,
+          ...data.syntax!.errors.map(e => `> [LINE ${e.line}:${e.column}] ${e.message}`),
+          "> VULNERABILITY SCAN: SKIPPED",
+          "> ABORTING..."
+        ]);
+        setStatus("FINISHED");
+        setError("Analysis Halted: Syntax Error Detected");
+        return; // Stop further processing
+      }
+
       const vulnCount = data.vulnerabilities?.length ?? 0;
       const rScore = getRiskScore(data);
 

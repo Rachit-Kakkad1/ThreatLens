@@ -2,6 +2,8 @@ import { detectSQLInjection } from "./sqlInjection.js";
 import { detectXSS } from "./xss.js";
 import { detectHardcodedSecrets } from "./hardcodedSecrets.js";
 import { detectCodeQualityIssues } from "./quality.js";
+import { detectInsecureDependencies } from "./dependencyCheck.js";
+import { detectAuthWeakness } from "./authWeakness.js";
 
 /**
  * Runs all vulnerability detectors against normalized input.
@@ -41,6 +43,22 @@ export function runAllDetectors(normalizedInput) {
     if (Array.isArray(qualityFindings)) findings.push(...qualityFindings);
   } catch (error) {
     console.error("Code Quality detector failed:", error.message);
+  }
+
+  // New Detectors
+  try {
+    // Pass raw content and type/language
+    const dependencyFindings = detectInsecureDependencies(normalizedInput.raw, normalizedInput.type);
+    if (Array.isArray(dependencyFindings)) findings.push(...dependencyFindings);
+  } catch (error) {
+    console.error("Dependency Check detector failed:", error.message);
+  }
+
+  try {
+    const authFindings = detectAuthWeakness(normalizedInput.raw);
+    if (Array.isArray(authFindings)) findings.push(...authFindings);
+  } catch (error) {
+    console.error("Auth Weakness detector failed:", error.message);
   }
 
   return findings;

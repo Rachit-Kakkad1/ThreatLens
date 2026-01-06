@@ -171,8 +171,8 @@ export const LoginPage = () => {
                     }}
                     className="group flex items-center gap-2 text-[10px] font-bold text-gray-600 hover:text-green-400 font-mono uppercase tracking-widest transition-colors"
                   >
-                    <Terminal size={10} />
-                    <span>[ Initialize_Dev_Protocol ]</span>
+                    {/* <Terminal size={10} />
+                    <span>[ Initialize_Dev_Protocol ]</span> */}
                   </button>
                 </div>
               </div>

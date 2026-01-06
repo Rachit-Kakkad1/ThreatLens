@@ -5,6 +5,7 @@
  */
 
 import { validateInput } from "./utils/inputValidator.js";
+import { validateSyntax } from "./syntax/index.js";
 import { normalizeInput } from "./normalizers/index.js";
 import { runAllDetectors } from "./detectors/index.js";
 import { calculateRiskScore } from "./riskEngine.js";
@@ -28,10 +29,26 @@ export function analyzeInput({ inputType = "code", content, language }) {
     };
   }
 
-  /* 2️⃣ Normalize input */
+  /* 2️⃣ Syntax Validation (Pre-scan gate) */
+  const syntaxCheck = validateSyntax(content, language);
+  if (!syntaxCheck.valid) {
+    return {
+      success: true,
+      analysisType: "MANUAL",
+      syntax: syntaxCheck,
+      analysis: {
+        vulnerabilities: [],
+        overallRiskScore: 0,
+      },
+      engineDecision: "HALTED_AT_SYNTAX_STAGE",
+      processingTime: Number(stopTimer()) || 0,
+    };
+  }
+
+  /* 3️⃣ Normalize input */
   const normalizedInput = normalizeInput(inputType, content, language);
 
-  /* 3️⃣ Detect vulnerabilities */
+  /* 4️⃣ Detect vulnerabilities */
   const vulnerabilities = runAllDetectors(normalizedInput);
 
   /* 4️⃣ Risk scoring */
@@ -63,6 +80,7 @@ export function analyzeInput({ inputType = "code", content, language }) {
   /* 8️⃣ Final response */
   return {
     success: true,
+    syntax: syntaxCheck,
     vulnerabilities,
 
     // 🔑 CANONICAL RISK FIELDS
@@ -84,3 +102,5 @@ export function analyzeInput({ inputType = "code", content, language }) {
     },
   };
 }
+
+export default { analyze: analyzeInput };
