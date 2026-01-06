@@ -80,7 +80,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                     <div>
                       <p className="text-xs text-cyber-slate uppercase tracking-wider mb-1">Email</p>
                       <p className="text-sm font-bold text-cyber-white">
-                        {user?.email || "admin@vulnexa.io"}
+                        {user?.email || "admin@ThreatLens.io"}
                       </p>
                     </div>
                   </div>

@@ -165,18 +165,37 @@ export const DashboardPage = () => {
     ]);
   };
 
-  // --- SAFETY CHECKS ---
-  const safeStats = {
-    totalScans: metrics?.totalScans || 0,
-    totalVulnerabilities: metrics?.totalVulnerabilities || 0,
-    severity: metrics?.severityDistribution || {
-      Low: 0,
-      Medium: 0,
-      High: 0,
-      Critical: 0,
-    },
-    riskTrends: metrics?.riskTrends || [],
-  };
+ // --- SAFETY CHECKS ---
+const safeStats = {
+  totalScans: metrics?.totalScans || 0,
+  totalVulnerabilities: metrics?.totalVulnerabilities || 0,
+  severity: metrics?.severityDistribution || {
+    Low: 0,
+    Medium: 0,
+    High: 0,
+    Critical: 0,
+  },
+  riskTrends: metrics?.riskTrends || [],
+};
+
+// 🔥 ADD YOUR CODE RIGHT HERE
+const totalVulns = safeStats.totalVulnerabilities;
+
+const severityCounts = {
+  LOW: safeStats.severity.Low,
+  MEDIUM: safeStats.severity.Medium,
+  HIGH: safeStats.severity.High,
+  CRITICAL: safeStats.severity.Critical,
+};
+
+const atRiskCount =
+  severityCounts.HIGH + severityCounts.CRITICAL;
+
+const atRiskPercent =
+  totalVulns === 0
+    ? 0
+    : Math.round((atRiskCount / totalVulns) * 100);
+
 
   // Calculate Risk Score Safely
   const currentRiskScore =
@@ -201,14 +220,14 @@ export const DashboardPage = () => {
   }, []);
 
   return (
-   <div className="min-h-screen cursor-scope">
+    <div className="min-h-screen cursor-scope">
 
 
       {/* --- CURSOR PORTAL: Renders directly to body to avoid clipping --- */}
       {createPortal(
-  <div ref={cursorRef} className="custom-cursor" />,
-  document.body
-)}
+        <div ref={cursorRef} className="custom-cursor" />,
+        document.body
+      )}
 
 
       <DashboardLayout>
@@ -222,11 +241,11 @@ export const DashboardPage = () => {
           <motion.div variants={item} className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <h1 className="text-4xl font-black tracking-tighter text-cyber-white">
-                VULNEXA_COMMAND_CENTER
+                ThreatLens_COMMAND_CENTER
               </h1>
               <p className="text-cyber-slate text-xs font-bold uppercase tracking-[0.3em] mt-1 flex items-center">
                 <span className="w-2 h-2 bg-cyber-green rounded-full mr-2 animate-pulse shadow-[0_0_10px_rgb(var(--cyber-green))]" />
-                VULNEXA_CORE v4.0.0 // USER:{" "}
+                ThreatLens_CORE v4.0.0 // USER:{" "}
                 {user?.name?.toUpperCase() || "ADMIN"}
               </p>
             </div>
@@ -356,11 +375,11 @@ export const DashboardPage = () => {
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{
-                            width: `${Math.min(
-                              100,
-                              (bar.val / (safeStats.totalVulnerabilities || 1)) *
-                              100
-                            )}%`,
+                            width: `${totalVulns === 0
+                                ? 0
+                                : Math.round((bar.val / totalVulns) * 100)
+                              }%`,
+
                           }}
                           transition={{ duration: 1, delay: i * 0.1 }}
                           className={`h-full ${bar.color} shadow-[0_0_10px_currentColor]`}

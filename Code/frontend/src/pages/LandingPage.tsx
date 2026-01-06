@@ -174,7 +174,7 @@ const LandingPage: React.FC = () => {
 
     // --- 4. TERMINAL TEXT ---
     useEffect(() => {
-        const text = `> INITIATING_VULNEXA_CORE...\n> SCANNING_DEPENDENCY_TREE...\n> [!] CRITICAL_VULN_FOUND: CVE-2024-3801\n> APPLYING_HOTFIX_PATCH...\n> SYSTEM_SECURE.`;
+        const text = `> INITIATING_ThreatLens_CORE...\n> SCANNING_DEPENDENCY_TREE...\n> [!] CRITICAL_VULN_FOUND: CVE-2024-3801\n> APPLYING_HOTFIX_PATCH...\n> SYSTEM_SECURE.`;
         let i = 0;
         let timeout: NodeJS.Timeout;
         const type = () => {
@@ -214,7 +214,7 @@ const LandingPage: React.FC = () => {
                 <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-3 cursor-pointer group">
                         <div className="w-3 h-8 bg-blue-500 rounded-sm animate-pulse shadow-[0_0_15px_#3B82F6]" />
-                        <span className="text-xl font-bold tracking-widest font-mono text-white group-hover:text-blue-400 transition-colors">VULNEXA</span>
+                        <span className="text-xl font-bold tracking-widest font-mono text-white group-hover:text-blue-400 transition-colors">ThreatLens</span>
                     </div>
                     <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400">
                         {['Methodology', 'Features', 'Architecture', 'FAQ'].map((item) => (
@@ -309,7 +309,7 @@ const LandingPage: React.FC = () => {
                                 <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50" />
                             </div>
                             <div className="ml-4 px-3 py-0.5 bg-black/50 rounded text-[10px] text-gray-500 font-mono flex-1 text-center border border-white/5">
-                                https://app.vulnexa.io/mission-control
+                                https://app.ThreatLens.io/mission-control
                             </div>
                         </div>
 
@@ -464,7 +464,7 @@ const LandingPage: React.FC = () => {
                     <h2 className="text-3xl font-bold text-white mb-12 text-center">Frequently Asked Questions</h2>
                     <div className="space-y-2">
                         {[
-                            { q: "How is this different from SonarQube?", a: "VULNEXA doesn't just find bugs; it simulates active attacks to prove exploitability, reducing false positives by 95%." },
+                            { q: "How is this different from SonarQube?", a: "ThreatLens doesn't just find bugs; it simulates active attacks to prove exploitability, reducing false positives by 95%." },
                             { q: "Is my source code stored?", a: "No. Our analysis runs in ephemeral, air-gapped containers that are destroyed immediately after the session." },
                             { q: "Can I deploy on-premise?", a: "Yes. Enterprise plans include Docker containers and Helm charts for full on-premise air-gapped deployment." },
                             { q: "What languages are supported?", a: "Currently supports Python, Node.js, Go, Rust, Java, and C++. More coming soon." }
@@ -506,7 +506,7 @@ const LandingPage: React.FC = () => {
                     <a href="#" className="hover:text-blue-400 transition-colors cursor-pointer">GITHUB</a>
                     <a href="#" className="hover:text-blue-400 transition-colors cursor-pointer">LINKEDIN</a>
                 </div>
-                <p>VULNEXA // SECURITY_INTELLIGENCE_PLATFORM</p>
+                <p>ThreatLens // SECURITY_INTELLIGENCE_PLATFORM</p>
                 <p className="mt-2">© 2026 ALL RIGHTS RESERVED</p>
             </footer>
         </div>

@@ -100,9 +100,9 @@ export const LoginPage = () => {
 
               <div className="relative">
                 <h1 className="text-4xl font-black tracking-tighter text-white mb-2 relative inline-block">
-                  VULNEXA
-                  <span className="glitch-layer" aria-hidden="true">VULNEXA</span>
-                  <span className="glitch-layer" aria-hidden="true">VULNEXA</span>
+                  ThreatLens
+                  <span className="glitch-layer" aria-hidden="true">ThreatLens</span>
+                  <span className="glitch-layer" aria-hidden="true">ThreatLens</span>
                   <span className="text-blue-500">_CORE</span>
                 </h1>
               </div>
