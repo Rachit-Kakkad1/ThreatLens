@@ -128,3 +128,26 @@ export interface AnalysisResult {
   createdAt?: string;
   updatedAt?: string;
 }
+
+// ==================================================
+// History & Dashboard types (frontend contract)
+// ==================================================
+export interface AnalysisHistoryItem {
+  id: string;
+  inputType: InputType;
+  overallRiskScore: number;
+  vulnerabilityCount: number;
+  analysisDate: string;
+}
+
+export interface DashboardMetrics {
+  totalScans: number;
+  totalVulnerabilities: number;
+  severityDistribution: {
+    Low: number;
+    Medium: number;
+    High: number;
+    Critical: number;
+  };
+  riskTrends: Array<{ timestamp: string; riskScore: number }>;
+}

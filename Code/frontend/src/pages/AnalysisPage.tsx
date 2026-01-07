@@ -231,6 +231,11 @@ export const AnalysisPage = () => {
     terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [logs]);
 
+  // Derived flags
+  const isSyntaxHalt =
+    result?.engineDecision === "HALTED_AT_SYNTAX_STAGE" ||
+    (result?.syntax && result.syntax.valid === false);
+
   // Color helper for severity
   const getSeverityColor = (sev?: string) => {
     if (!sev) return "text-cyber-blue bg-cyber-blue/20"; // Default safe fallback
@@ -665,8 +670,17 @@ export const AnalysisPage = () => {
         </div>
       </div>
 
-      {/* CODE ANALYSIS GRAPH - Shows after analysis is complete */}
-      {status === "FINISHED" && result && (
+      {/* SYNTAX CHECK INDICATOR */}
+      {status === "SCANNING" && (
+        <div className="mt-3 text-center">
+          <span className="inline-block text-[10px] font-bold px-3 py-1 rounded bg-yellow-600/20 text-yellow-400 border border-yellow-600/40">
+            Syntax Checking: ACTIVE
+          </span>
+        </div>
+      )}
+
+      {/* CODE ANALYSIS GRAPH - Hidden on syntax error */}
+      {status === "FINISHED" && result && !isSyntaxHalt && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -699,6 +713,15 @@ export const AnalysisPage = () => {
             </div>
           </GlassCard>
         </motion.div>
+      )}
+
+      {/* GRAPH HIDDEN NOTICE */}
+      {status === "FINISHED" && result && isSyntaxHalt && (
+        <div className="mt-6 text-center">
+          <span className="inline-block text-[10px] font-bold px-3 py-1 rounded bg-red-600/20 text-red-400 border border-red-600/40">
+            Graph hidden due to syntax error
+          </span>
+        </div>
       )}
     </DashboardLayout>
   );
