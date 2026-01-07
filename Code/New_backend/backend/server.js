@@ -23,6 +23,7 @@ import dashboardRoutes from "./routes/dashboard.routes.js";
 import profileRoutes from "./routes/profile.routes.js";
 import systemRoutes from "./routes/system.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
+import reportsRoutes from "./routes/reports.routes.js";
 
 /* -------------------- Init -------------------- */
 dotenv.config();
@@ -69,6 +70,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/system", systemRoutes);
 app.use("/api/ai", aiRoutes); // 🔥 AI chat + advisory endpoints
+app.use("/api/reports", reportsRoutes);
 
 /* -------------------- Error Handler -------------------- */
 app.use(errorHandler);

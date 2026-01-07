@@ -16,6 +16,21 @@ import { calculateImpact } from "./impactEngine.js";
 import { buildSummary } from "./summaryEngine.js";
 import { measureTime } from "./utils/timers.js";
 
+function detectLanguage(inputType, content) {
+  const t = String(inputType || "").toLowerCase();
+  if (t === "sql") return "sql";
+  if (t === "config") return "json";
+  const s = String(content || "").trim();
+  try {
+    JSON.parse(s);
+    return "json";
+  } catch {}
+  const upper = s.slice(0, 512).toUpperCase();
+  const sqlHints = ["SELECT ", "INSERT ", "UPDATE ", "DELETE ", "CREATE ", "DROP ", "ALTER ", "WITH "];
+  if (sqlHints.some((k) => upper.includes(k))) return "sql";
+  return "javascript";
+}
+
 export function analyzeInput({ inputType = "code", content, language }) {
   const stopTimer = measureTime();
 
@@ -29,78 +44,60 @@ export function analyzeInput({ inputType = "code", content, language }) {
     };
   }
 
-  /* 2️⃣ Syntax Validation (Pre-scan gate) */
-  const syntaxCheck = validateSyntax(content, language);
-  if (!syntaxCheck.valid) {
+  try {
+    const effectiveLanguage = language || detectLanguage(inputType, content);
+    const syntaxCheck = validateSyntax(content, effectiveLanguage);
+    if (!syntaxCheck.valid) {
+      return {
+        success: true,
+        analysisType: "MANUAL",
+        syntax: syntaxCheck,
+        analysis: {
+          vulnerabilities: [],
+          overallRiskScore: 0,
+        },
+        engineDecision: "HALTED_AT_SYNTAX_STAGE",
+        processingTime: Number(stopTimer()) || 0,
+      };
+    }
+
+    const normalizedInput = normalizeInput(inputType, content, effectiveLanguage);
+    const vulnerabilities = runAllDetectors(normalizedInput);
+    const rawRiskScore =
+      vulnerabilities.length > 0 ? calculateRiskScore(vulnerabilities) : 0;
+    const riskScore = Number.isFinite(rawRiskScore) ? rawRiskScore : 0;
+    const attackerView = generateAttackerView(vulnerabilities, normalizedInput);
+    const defenderFixes = generateDefenderFixes(vulnerabilities, normalizedInput);
+    const payloads = generateSimulatedPayloads(vulnerabilities);
+    const impactAnalysis = calculateImpact(vulnerabilities);
+    const summary = buildSummary(vulnerabilities);
+
     return {
       success: true,
-      analysisType: "MANUAL",
       syntax: syntaxCheck,
-      analysis: {
-        vulnerabilities: [],
-        overallRiskScore: 0,
+      vulnerabilities,
+      riskScore,
+      overallRiskScore: riskScore,
+      attackerView,
+      defenderFixes,
+      payloads,
+      impactAnalysis,
+      summary,
+      processingTime: Number(stopTimer()) || 0,
+      ethics: {
+        staticAnalysisOnly: true,
+        noExecution: true,
+        noLiveAttacks: true,
       },
-      engineDecision: "HALTED_AT_SYNTAX_STAGE",
+      engineDecision: "COMPLETED",
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: "Engine failure",
       processingTime: Number(stopTimer()) || 0,
     };
   }
-
-  /* 3️⃣ Normalize input */
-  const normalizedInput = normalizeInput(inputType, content, language);
-
-  /* 4️⃣ Detect vulnerabilities */
-  const vulnerabilities = runAllDetectors(normalizedInput);
-
-  /* 4️⃣ Risk scoring */
-  const rawRiskScore =
-    vulnerabilities.length > 0
-      ? calculateRiskScore(vulnerabilities)
-      : 0;
-
-  const riskScore = Number.isFinite(rawRiskScore) ? rawRiskScore : 0;
-
-  /* 5️⃣ Attacker / Defender views */
-  const attackerView = generateAttackerView(
-    vulnerabilities,
-    normalizedInput
-  );
-
-  const defenderFixes = generateDefenderFixes(
-    vulnerabilities,
-    normalizedInput
-  );
-
-  /* 6️⃣ Ethical simulated payloads */
-  const payloads = generateSimulatedPayloads(vulnerabilities);
-
-  /* 7️⃣ Impact & summary */
-  const impactAnalysis = calculateImpact(vulnerabilities);
-  const summary = buildSummary(vulnerabilities);
-
-  /* 8️⃣ Final response */
-  return {
-    success: true,
-    syntax: syntaxCheck,
-    vulnerabilities,
-
-    // 🔑 CANONICAL RISK FIELDS
-    riskScore,
-    overallRiskScore: riskScore, // ✅ alias for DB + frontend safety
-
-    attackerView,
-    defenderFixes,
-    payloads,
-    impactAnalysis,
-    summary,
-
-    processingTime: Number(stopTimer()) || 0,
-
-    ethics: {
-      staticAnalysisOnly: true,
-      noExecution: true,
-      noLiveAttacks: true,
-    },
-  };
 }
 
 export default { analyze: analyzeInput };

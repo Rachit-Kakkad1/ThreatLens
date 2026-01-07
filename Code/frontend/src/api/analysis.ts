@@ -12,10 +12,29 @@ export const analysisApi = {
   // -----------------------------
   analyze: async (payload: AnalysisRequest): Promise<AnalysisResult> => {
     const response = await api.post("/api/analyze", payload);
-
-    // Backend already returns a full analysis object
-    // DO NOT normalize or strip fields here
-    return response.data.analysis;
+    const body = response.data || {};
+    const analysis = body.analysis || {};
+    return {
+      // core analysis fields
+      riskScore: analysis.riskScore ?? analysis.overallRiskScore ?? 0,
+      vulnerabilities: analysis.vulnerabilities ?? [],
+      attackerView: analysis.attackerView ?? [],
+      defenderFixes: analysis.defenderFixes ?? [],
+      impactAnalysis: analysis.impactAnalysis ?? [],
+      processingTime: analysis.processingTime ?? 0,
+      overallRiskScore: analysis.overallRiskScore ?? analysis.riskScore ?? 0,
+      // syntax + decision flags
+      syntax: body.syntax,
+      engineDecision: body.engineDecision,
+      // passthrough optional summary
+      summary: analysis.summary,
+      // passthrough metadata
+      _id: analysis.id,
+      inputType: analysis.inputType,
+      content: undefined,
+      createdAt: undefined,
+      updatedAt: undefined,
+    };
   },
 
   // -----------------------------

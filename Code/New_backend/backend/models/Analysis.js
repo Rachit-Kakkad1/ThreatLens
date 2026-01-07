@@ -80,6 +80,25 @@ const analysisSchema = new mongoose.Schema(
       type: [vulnerabilitySchema],
       default: [],
     },
+ 
+    // Optional educational views (stored if available)
+    attackerView: {
+      type: [new mongoose.Schema({ abuseLogic: String }, { _id: false })],
+      default: [],
+    },
+    defenderFixes: {
+      type: [new mongoose.Schema({ secureFix: String, secureExample: String }, { _id: false })],
+      default: [],
+    },
+    impactAnalysis: {
+      type: [
+        new mongoose.Schema(
+          { technicalImpact: String, businessImpact: String, killChainStage: String },
+          { _id: false }
+        ),
+      ],
+      default: [],
+    },
 
     analysisDate: {
       type: Date,
@@ -109,6 +128,12 @@ const analysisSchema = new mongoose.Schema(
         column: Number,
         _id: false
       }]
+    },
+ 
+    ethics: {
+      staticAnalysisOnly: { type: Boolean, default: true },
+      noExecution: { type: Boolean, default: true },
+      aiAdvisoryOnly: { type: Boolean, default: true },
     },
   },
   {

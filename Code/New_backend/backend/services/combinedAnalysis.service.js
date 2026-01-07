@@ -124,6 +124,7 @@ export async function runCombinedAnalysis({
   return {
     success: true,
     mode,
+    engineDecision: engineResult.engineDecision || "COMPLETED",
     syntax: engineResult.syntax, // ✅ Syntax status
 
     analysis: {
